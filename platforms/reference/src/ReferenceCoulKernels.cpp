@@ -52,6 +52,7 @@ void ReferenceCalcCoulForceKernel::initialize(const System& system, const CoulFo
         Vec3 boxVectors[3];
         system.getDefaultPeriodicBoxVectors(boxVectors[0], boxVectors[1], boxVectors[2]);
         alpha = (1.0/cutoff)*sqrt(-log(2.0*ewaldTol));
+        one_alpha2 = 1.0 / alpha / alpha;
         kmaxx = 0;
         while (getEwaldParamValue(kmaxx, boxVectors[0][0], alpha) > ewaldTol){
             kmaxx += 1;
@@ -119,11 +120,105 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
         }
     } else {
         // PBC
+        // calc self energy
+        double selfEwaldEnergy = 0.0;
+        for(int ii=0;ii<numParticles;ii++){
+            selfEwaldEnergy -= ONE_4PI_EPS0 * charges[ii] * charges[ii] * alpha / SQRT_PI;
+        }
         // calc reciprocal part
+        double recipEnergy = 0.0;
+        double recipX = TWO_PI / box[0][0];
+        double recipY = TWO_PI / box[1][1];
+        double recipZ = TWO_PI / box[2][2];
 
+        double constant = 4.0 / box[0][0] / box[1][1] / box[2][2] * PI * ONE_4PI_EPS0;
+        
+        int minky = 0;
+        int minkz = 1;
+        for(int nkx=0;nkx < kmaxx;nkx++){
+            double kx = nkx * recipX;
+            for(int nky=minky;nky < kmaxy;nky++){
+                double ky = nky * recipY;
+                for(int nkz=minkz;nkz < kmaxz;nkz++){
+                    double kz = nkz * recipZ;
+                    double k2 = kx * kx + ky * ky + kz * kz;
+                    double eak = exp(- k2 * 0.25 * one_alpha2) / k2;
+                    double ss = 0.0;
+                    double cs = 0.0;
+                    if (includeForces || includeEnergy){
+                        for(int ii=0;ii<numParticles;ii++){
+                            double gr = kx * pos[ii][0] + ky * pos[ii][1] + kz * pos[ii][2];
+                            cs += charges[ii] * cos(gr);
+                            ss += charges[ii] * sin(gr);
+                        }
+                    }
+                    if(includeForces){
+                        for(int ii=0;ii<numParticles;ii++){
+                            double gr = kx * pos[ii][0] + ky * pos[ii][1] + kz * pos[ii][2];
+                            double gradr = 2.0 * constant * eak * (ss * charges[ii] * cos(gr) - cs * charges[ii] * sin(gr));
+                            forces[ii][0] -= gradr * kx;
+                            forces[ii][1] -= gradr * ky;
+                            forces[ii][2] -= gradr * kz;
+                        }
+                    }
+                    if(includeEnergy){
+                        recipEnergy += constant * eak * (cs * cs + ss * ss)
+                    }
+                }
+                minkz = 1 - kmaxz;
+            }
+            minky = 1 - kmaxy;
+        }
         // calc bonded part
+        computeNeighborListVoxelHash(*neighborList, numParticles, pos, vector<set<int>>, box, true, cutoff, 0.0);
+        double realSpaceEwaldEnergy = 0.0;
+        for(auto& pair : *neighborList){
+            int ii = pair.first;
+            int jj = pair.second;
+
+            double deltaR[2][ReferenceForce::LastDeltaRIndex];
+            ReferenceForce::getDeltaRPeriodic(atomCoordinates[jj], atomCoordinates[ii], periodicBoxVectors, deltaR[0]);
+            double r         = deltaR[0][ReferenceForce::RIndex];
+            double inverseR  = 1.0/(deltaR[0][ReferenceForce::RIndex]);
+            double alphaR = alpha * r;
+
+            if(includeForces){
+                double dEdR = ONE_4PI_EPS0 * charges[ii] * charges[jj] * inverseR * inverseR * inverseR;
+                dEdR = dEdR * (erfc(alphaR) + 2 * alphaR * exp (- alphaR * alphaR) / SQRT_PI);
+                for(int kk=0;kk<3;kk++){
+                    double fconst = dEdR*deltaR[0][kk];
+                    forces[ii][kk] -= fconst;
+                    forces[jj][kk] += fconst;
+                }
+            }
+
+            realSpaceEwaldEnergy += ONE_4PI_EPS0*charges[ii]*charges[jj]*inverseR*erfc(alphaR);
+        }
 
         // calc exclusion part
+        double realSpaceExclusion = 0.0;
+        for(int nn=0;nn < exclusions.size(); nn++){
+            int ii = exclusions[nn].first;
+            int jj = exclusions[nn].second;
+
+            double deltaR[2][ReferenceForce::LastDeltaRIndex];
+            ReferenceForce::getDeltaRPeriodic(atomCoordinates[jj], atomCoordinates[ii], periodicBoxVectors, deltaR[0]);
+            double r         = deltaR[0][ReferenceForce::RIndex];
+            double inverseR  = 1.0/(deltaR[0][ReferenceForce::RIndex]);
+            double alphaR = alpha * r;
+
+            if(includeForces){
+                double dEdR = ONE_4PI_EPS0 * charges[ii] * charges[jj] * inverseR * inverseR * inverseR;
+                dEdR = dEdR * (erfc(alphaR) + 2 * alphaR * exp (- alphaR * alphaR) / SQRT_PI);
+                for(int kk=0;kk<3;kk++){
+                    double fconst = dEdR*deltaR[0][kk];
+                    forces[ii][kk] += fconst;
+                    forces[jj][kk] -= fconst;
+                }
+            }
+            realSpaceExclusion -= ONE_4PI_EPS0*charges[ii]*charges[jj]*inverseR*erfc(alphaR);
+        }
+        energy = selfEwaldEnergy + recipEnergy + realSpaceEwaldEnergy + realSpaceExclusion;
     }
     return energy;
 }

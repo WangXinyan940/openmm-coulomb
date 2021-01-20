@@ -36,10 +36,21 @@ public:
     double execute(OpenMM::ContextImpl& context, bool includeForces, bool includeEnergy);
 private:
     bool hasInitializedKernel;
-    double accelerate;
-    OpenMM::CudaArray massvec_cu;
+    OpenMM::CudaArray charges_cu;
+    OpenMM::CudaArray exclusions_cu;
+    OpenMM::CudaArray cosSinSums;
     OpenMM::CudaContext& cu;
-    CUfunction addForcesKernel;
+    CUfunction calcNoPBCEnForcesKernel;
+    CUfunction calcNoPBCExclusionsKernel;
+    CUfunction calcEwaldRecKernel;
+    CUfunction calcEwaldRealKernel;
+    CUfunction calcEwaldExclusionsKernel;
+    double cutoff;
+    std::vector<double> charges;
+    std::vector<std::pair<int,int>> exclusions;
+    double ewaldTol, alpha, one_alpha2;
+    bool ifPBC;
+    int kmaxx, kmaxy, kmaxz;
 };
 
 } // namespace CosAccPlugin

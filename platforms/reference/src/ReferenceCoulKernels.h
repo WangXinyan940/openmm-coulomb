@@ -3,6 +3,7 @@
 
 #include "CoulKernels.h"
 #include "openmm/Platform.h"
+#include "ReferenceNeighborList.h"
 #include <vector>
 #include <pair>
 #include <iostream>
@@ -37,9 +38,10 @@ private:
     double cutoff;
     std::vector<double> charges;
     std::vector<std::pair<int,int>> exclusions;
-    double ewaldTol;
+    double ewaldTol, alpha, one_alpha2;
     bool ifPBC;
     int kmaxx, kmaxy, kmaxz;
+    NeighborList* neighborList;
 };
 
 } // namespace CoulPlugin
