@@ -45,10 +45,11 @@ void ReferenceCalcCoulForceKernel::initialize(const System& system, const CoulFo
         pair<int,int> expair(p1, p2);
         exclusions.push_back(expair);
     }
-    cutoff = force.getCutoffDistance();
-    ewaldTol = force.getEwaldErrorTolerance();
+
     ifPBC = force.usesPeriodicBoundaryConditions();
     if (ifPBC){
+        cutoff = force.getCutoffDistance();
+        ewaldTol = force.getEwaldErrorTolerance();
         Vec3 boxVectors[3];
         system.getDefaultPeriodicBoxVectors(boxVectors[0], boxVectors[1], boxVectors[2]);
         alpha = (1.0/cutoff)*sqrt(-log(2.0*ewaldTol));

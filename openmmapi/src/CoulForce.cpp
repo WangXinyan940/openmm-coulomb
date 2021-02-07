@@ -38,7 +38,7 @@ void CoulForce::setCutoffDistance(double cutoff){
     cutoffDistance = cutoff;
 }
 
-bool CoulForce::usesPeriodicBoundaryConditions() {
+bool CoulForce::usesPeriodicBoundaryConditions() const {
     return ifPBC;
 }
 
@@ -55,7 +55,7 @@ int CoulForce::getNumExceptions() const {
     return exclusions.size();
 }
 
-void CoulForce::getExceptionParameters(const int index, int& p1, int& p2){
+void CoulForce::getExceptionParameters(const int index, int& p1, int& p2) const {
     p1 = exclusions[index].first;
     p2 = exclusions[index].second;
 }

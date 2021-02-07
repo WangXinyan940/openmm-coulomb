@@ -37,20 +37,26 @@ public:
 private:
     bool hasInitializedKernel;
     OpenMM::CudaArray charges_cu;
-    OpenMM::CudaArray exclusions_cu;
+    OpenMM::CudaArray pairidx0, pairidx1;
+    OpenMM::CudaArray expairidx0, expairidx1;
     OpenMM::CudaArray cosSinSums;
+    OpenMM::CudaArray indexAtom;
     OpenMM::CudaContext& cu;
     CUfunction calcNoPBCEnForcesKernel;
     CUfunction calcNoPBCExclusionsKernel;
-    CUfunction calcEwaldRecKernel;
+    CUfunction calcEwaldRecEnerKernel;
+    CUfunction calcEwaldRecForceKernel;
     CUfunction calcEwaldRealKernel;
     CUfunction calcEwaldExclusionsKernel;
+    CUfunction indexAtomKernel;
     double cutoff;
     std::vector<double> charges;
     std::vector<std::pair<int,int>> exclusions;
+    int numexclusions;
     double ewaldTol, alpha, one_alpha2;
     bool ifPBC;
     int kmaxx, kmaxy, kmaxz;
+    double selfenergy;
 };
 
 } // namespace CosAccPlugin

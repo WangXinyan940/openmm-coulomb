@@ -55,7 +55,7 @@ public:
      * Return if PBC is used in this force. Default is no.
      * @return             whether PBC system
      */
-    bool usesPeriodicBoundaryConditions();
+    bool usesPeriodicBoundaryConditions() const;
     /**
      * Set if using PBC in the system.
      * @param ifPeriod     if use PBC
@@ -79,7 +79,7 @@ public:
      * @param p1             output index 1
      * @param p2             output index 2
      */
-    void getExceptionParameters(const int index, int& p1, int& p2);
+    void getExceptionParameters(const int index, int& p1, int& p2) const;
     /**
      * Set the tolerance of Ewald sum. It will be used to generate k-vectors
      * for reciprocal space.
