@@ -195,6 +195,16 @@ void CudaCalcCoulForceKernel::initialize(const System& system, const CoulForce& 
         pbcDefines["INCLUDE_ENERGY"] = "1";
         pbcDefines["CUTOFF"] = cu.doubleToString(cutoff);
 
+        pbcDefines["USE_DOUBLE_PRECISION"] = cu.getUseDoublePrecision() ? "1" : "";
+        pbcDefines["EWALD_ALPHA"] = cu.doubleToString(alpha);
+        pbcDefines["TWO_OVER_SQRT_PI"] = cu.doubleToString(2.0/sqrt(M_PI));
+        pbcDefines["KMAX_X"] = cu.intToString(kmaxx);
+        pbcDefines["KMAX_Y"] = cu.intToString(kmaxy);
+        pbcDefines["KMAX_Z"] = cu.intToString(kmaxz);
+        pbcDefines["EXP_COEF"] = cu.doubleToString(-1.0/(4.0*alpha*alpha));
+        pbcDefines["ONE_4PI_EPS0"] = cu.doubleToString(ONE_4PI_EPS0);
+        pbcDefines["M_PI"] = cu.doubleToString(M_PI);
+
         // macro for short-range
         CUmodule PBCModule = cu.createModule(CudaKernelSources::vectorOps + CudaCoulKernelSources::PBCForce, pbcDefines);
         calcEwaldRecEnerKernel = cu.getKernel(PBCModule, "computeEwaldRecEner");
