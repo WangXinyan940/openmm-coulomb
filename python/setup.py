@@ -14,9 +14,9 @@ if platform.system() == 'Darwin':
     extra_compile_args += ['-stdlib=libc++', '-mmacosx-version-min=10.7']
     extra_link_args += ['-stdlib=libc++', '-mmacosx-version-min=10.7', '-Wl', '-rpath', openmm_dir+'/lib']
 
-extension = Extension(name='_openmmcosacc',
-                      sources=['CosAccPluginWrapper.cpp'],
-                      libraries=['OpenMM', 'OpenMMCosAcc'],
+extension = Extension(name='_openmmcoul',
+                      sources=['CoulPluginWrapper.cpp'],
+                      libraries=['OpenMM', 'OpenMMCoul'],
                       include_dirs=[os.path.join(openmm_dir, 'include')],
                       library_dirs=[os.path.join(openmm_dir, 'lib')],
                       runtime_library_dirs=[os.path.join(openmm_dir, 'lib')],
@@ -24,8 +24,8 @@ extension = Extension(name='_openmmcosacc',
                       extra_link_args=extra_link_args
                      )
 
-setup(name='openmmcosacc',
+setup(name='openmmcoul',
       version='1.0',
-      py_modules=['openmmcosacc'],
+      py_modules=['openmmcoul'],
       ext_modules=[extension],
      )

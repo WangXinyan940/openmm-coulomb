@@ -1,5 +1,5 @@
-#ifndef OPENMM_COSACC_FORCE_IMPL_H_
-#define OPENMM_COSACC_FORCE_IMPL_H_
+#ifndef OPENMM_Coul_FORCE_IMPL_H_
+#define OPENMM_Coul_FORCE_IMPL_H_
 
 /* -------------------------------------------------------------------------- *
  *                                   OpenMM                                   *
@@ -32,27 +32,27 @@
  * USE OR OTHER DEALINGS IN THE SOFTWARE.                                     *
  * -------------------------------------------------------------------------- */
 
-#include "CosAccForce.h"
+#include "CoulForce.h"
 #include "openmm/internal/ForceImpl.h"
 #include "openmm/Kernel.h"
 #include <utility>
 #include <set>
 #include <string>
 
-namespace CosAccPlugin {
+namespace CoulPlugin {
 
 class System;
 
 /**
- * This is the internal implementation of CosAccForce.
+ * This is the internal implementation of CoulForce.
  */
 
-class CosAccForceImpl : public OpenMM::ForceImpl {
+class CoulForceImpl : public OpenMM::ForceImpl {
 public:
-    CosAccForceImpl(const CosAccForce& owner);
-    ~CosAccForceImpl();
+    CoulForceImpl(const CoulForce& owner);
+    ~CoulForceImpl();
     void initialize(OpenMM::ContextImpl& context);
-    const CosAccForce& getOwner() const {
+    const CoulForce& getOwner() const {
         return owner;
     }
     void updateContextState(OpenMM::ContextImpl& context, bool& forcesInvalid) {
@@ -64,10 +64,10 @@ public:
     }
     std::vector<std::string> getKernelNames();
 private:
-    const CosAccForce& owner;
+    const CoulForce& owner;
     OpenMM::Kernel kernel;
 };
 
-} // namespace CosAccPlugin
+} // namespace CoulPlugin
 
-#endif /*OPENMM_COSACC_FORCE_IMPL_H_*/
+#endif /*OPENMM_Coul_FORCE_IMPL_H_*/

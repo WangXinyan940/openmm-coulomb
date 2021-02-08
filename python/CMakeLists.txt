@@ -1,5 +1,5 @@
-set(WRAP_FILE CosAccPluginWrapper.cpp)
-set(MODULE_NAME openmmcosacc)
+set(WRAP_FILE CoulPluginWrapper.cpp)
+set(MODULE_NAME openmmcoul)
 
 # Execute SWIG to generate source code for the Python module.
 
@@ -9,8 +9,8 @@ add_custom_command(
         -python -c++
         -o "${WRAP_FILE}"
         "-I${OPENMM_DIR}/include"
-        "${CMAKE_CURRENT_SOURCE_DIR}/openmmcosacc.i"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/openmmcosacc.i"
+        "${CMAKE_CURRENT_SOURCE_DIR}/openmmcoul.i"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/openmmcoul.i"
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
 )
 
