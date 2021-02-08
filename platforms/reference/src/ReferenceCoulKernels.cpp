@@ -185,7 +185,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
 
             if(includeForces){
                 double dEdR = ONE_4PI_EPS0 * charges[ii] * charges[jj] * inverseR * inverseR * inverseR;
-                dEdR = dEdR * (erfc(alphaR) + 2 * alphaR * exp (- alphaR * alphaR) / SQRT_PI);
+                dEdR = dEdR * (erfc(alphaR) + alphaR * exp (- alphaR * alphaR) * 2.0 / sqrt(M_PI));
                 for(int kk=0;kk<3;kk++){
                     double fconst = dEdR*deltaR[0][kk];
                     forces[ii][kk] -= fconst;
@@ -210,7 +210,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
 
             if(includeForces){
                 double dEdR = ONE_4PI_EPS0 * charges[ii] * charges[jj] * inverseR * inverseR * inverseR;
-                dEdR = dEdR * (erfc(alphaR) + 2 * alphaR * exp (- alphaR * alphaR) / SQRT_PI);
+                dEdR = dEdR * (erfc(alphaR) + alphaR * exp (- alphaR * alphaR) * 2.0 / sqrt(M_PI));
                 for(int kk=0;kk<3;kk++){
                     double fconst = dEdR*deltaR[0][kk];
                     forces[ii][kk] += fconst;

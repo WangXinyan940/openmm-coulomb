@@ -107,6 +107,7 @@ void CudaCalcCoulForceKernel::initialize(const System& system, const CoulForce& 
 
     if (!ifPBC){
         map<string, string> defines;
+        defines["ONE_4PI_EPS0"] = cu.doubleToString(ONE_4PI_EPS0);
         CUmodule module = cu.createModule(CudaKernelSources::vectorOps + CudaCoulKernelSources::noPBCForce, defines);
         calcNoPBCEnForcesKernel = cu.getKernel(module, "calcNoPBCEnForces");
         calcNoPBCExclusionsKernel = cu.getKernel(module, "calcNoPBCExclusions");
@@ -226,24 +227,22 @@ double CudaCalcCoulForceKernel::execute(ContextImpl& context, bool includeForces
         void* args_rec1[] = {
             &cu.getEnergyBuffer().getDevicePointer(),
             &cu.getPosq().getDevicePointer(),
-            &cusSinSums.getDevicePointer(),
+            &charges_cu.getDevicePointer(),                             // const real*    
+            &cu.getAtomIndexArray().getDevicePointer(),             // const int*           
+            &cosSinSums.getDevicePointer(),
             cu.getPeriodicBoxSizePointer(),                         // real4                                      periodicBoxSize
-            cu.getInvPeriodicBoxSizePointer(),                      // real4                                      invPeriodicBoxS
-            cu.getPeriodicBoxVecXPointer(),                         // real4                                      periodicBoxVecX
-            cu.getPeriodicBoxVecYPointer(),                         // real4                                      periodicBoxVecY
-            cu.getPeriodicBoxVecZPointer()                          // real4   
+            cu.getInvPeriodicBoxSizePointer(),                      // real4    
         };
         cu.executeKernel(calcEwaldRecEnerKernel, args_rec1, (2*kmaxx-1)*(2*kmaxy-1)*(2*kmaxz-1));
 
         void* args_rec2[] = {
             &cu.getForce().getDevicePointer(),
             &cu.getPosq().getDevicePointer(),
-            &cusSinSums.getDevicePointer(),
+            &charges_cu.getDevicePointer(),                             // const real*    
+            &cu.getAtomIndexArray().getDevicePointer(),             // const int*           
+            &cosSinSums.getDevicePointer(),
             cu.getPeriodicBoxSizePointer(),                         // real4                                      periodicBoxSize
-            cu.getInvPeriodicBoxSizePointer(),                      // real4                                      invPeriodicBoxS
-            cu.getPeriodicBoxVecXPointer(),                         // real4                                      periodicBoxVecX
-            cu.getPeriodicBoxVecYPointer(),                         // real4                                      periodicBoxVecY
-            cu.getPeriodicBoxVecZPointer()                          // real4   
+            cu.getInvPeriodicBoxSizePointer()                       // real4     
         };
         cu.executeKernel(calcEwaldRecForceKernel, args_rec2, numParticles);
 
