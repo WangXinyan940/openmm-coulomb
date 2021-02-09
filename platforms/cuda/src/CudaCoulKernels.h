@@ -6,6 +6,7 @@
 #include "openmm/cuda/CudaArray.h"
 #include <vector>
 #include <string>
+#include <utility>
 
 namespace CoulPlugin {
 
