@@ -171,6 +171,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
                     }
                     if(includeEnergy){
                         recipEnergy += constant * eak * (cs * cs + ss * ss);
+                        cout << constant << " " << eak << " " << cs << " " << ss << endl;
                     }
                 }
                 minkz = 1 - kmaxz;
