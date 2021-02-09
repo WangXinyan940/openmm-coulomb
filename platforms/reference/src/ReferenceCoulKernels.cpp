@@ -57,29 +57,17 @@ void ReferenceCalcCoulForceKernel::initialize(const System& system, const CoulFo
         system.getDefaultPeriodicBoxVectors(boxVectors[0], boxVectors[1], boxVectors[2]);
         alpha = (1.0/cutoff)*sqrt(-log(2.0*ewaldTol));
         one_alpha2 = 1.0 / alpha / alpha;
-        kmaxx = 0;
-        double gate = getEwaldParamValue(kmaxx, boxVectors[0][0], alpha);
-        cout << "G " << gate << endl;
-        while (gate > ewaldTol){
+        kmaxx = 1;
+        while (getEwaldParamValue(kmaxx, boxVectors[0][0], alpha) > ewaldTol){
             kmaxx += 1;
-            gate = getEwaldParamValue(kmaxx, boxVectors[0][0], alpha);
-            cout << "G " << gate << endl;
         }
-        kmaxy = 0;
-        gate = getEwaldParamValue(kmaxy, boxVectors[1][1], alpha);
-        cout << "G " << gate << endl;
-        while (gate > ewaldTol){
+        kmaxy = 1;
+        while (getEwaldParamValue(kmaxy, boxVectors[1][1], alpha) > ewaldTol){
             kmaxy += 1;
-            gate = getEwaldParamValue(kmaxy, boxVectors[1][1], alpha);
-            cout << "G " << gate << endl;
         }
-        kmaxz = 0;
-        gate = getEwaldParamValue(kmaxz, boxVectors[2][2], alpha);
-        cout << "G " << gate << endl;
-        while (gate > ewaldTol){
+        kmaxz = 1;
+        while (getEwaldParamValue(kmaxz, boxVectors[2][2], alpha) > ewaldTol){
             kmaxz += 1;
-            gate = getEwaldParamValue(kmaxz, boxVectors[2][2], alpha);
-            cout << "G " << gate << endl;
         }
         if (kmaxx%2 == 0)
             kmaxx += 1;
