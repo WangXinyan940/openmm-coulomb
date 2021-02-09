@@ -51,6 +51,7 @@ void ReferenceCalcCoulForceKernel::initialize(const System& system, const CoulFo
 
     ifPBC = force.usesPeriodicBoundaryConditions();
     if (ifPBC){
+        neighborList = new NeighborList();
         cutoff = force.getCutoffDistance();
         ewaldTol = force.getEwaldErrorTolerance();
         Vec3 boxVectors[3];
