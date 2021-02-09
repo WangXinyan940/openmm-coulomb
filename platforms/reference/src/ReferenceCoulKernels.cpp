@@ -81,7 +81,7 @@ void ReferenceCalcCoulForceKernel::initialize(const System& system, const CoulFo
 double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeForces, bool includeEnergy) {
     cout << "Execute" << endl;
     vector<Vec3>& pos = extractPositions(context);
-    cout << pos[1].x << " " << pos[1].y << " " << pos[1].z << endl;
+    cout << pos[1][0] << " " << pos[1][1] << " " << pos[1][2] << endl;
     vector<Vec3>& forces = extractForces(context);
     Vec3* box = extractBoxVectors(context);
     int numParticles = pos.size();
@@ -183,8 +183,8 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
         cout << recipEnergy << endl;
         // calc bonded part
         cout << "Bond" << endl;
-        cout << pos[1].x << " " << pos[1].y << " " << pos[1].z << endl;
-        cout << box[0].x << " " << box[1].y << " " << box[2].z << endl;
+        cout << pos[1][0] << " " << pos[1][1] << " " << pos[1][2] << endl;
+        cout << box[0][0] << " " << box[1][1] << " " << box[2][2] << endl;
         computeNeighborListVoxelHash(*neighborList, numParticles, pos, exclusions, box, ifPBC, cutoff, 0.0);
         // computeNeighborListNaive(*neighborList, numParticles, pos, exclusions, box, ifPBC, cutoff, 0.0);
         cout << "After nl" << endl;
