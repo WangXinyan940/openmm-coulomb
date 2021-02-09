@@ -37,7 +37,7 @@ public:
 private:
     double cutoff;
     std::vector<double> charges;
-    std::vector<std::pair<int,int>> exclusions;
+    std::vector<std::set<int>> exclusions;
     double ewaldTol, alpha, one_alpha2;
     bool ifPBC;
     int kmaxx, kmaxy, kmaxz;

@@ -41,11 +41,11 @@ void ReferenceCalcCoulForceKernel::initialize(const System& system, const CoulFo
     for(int i=0;i<numParticles;i++){
         charges[i] = force.getParticleCharge(i);
     }
-    for(int i=0;i<force.getNumExceptions();i++){
+    for(int ii=0;ii<force.getNumExceptions();ii++){
         int p1, p2;
-        force.getExceptionParameters(i, p1, p2);
-        pair<int,int> expair(p1, p2);
-        exclusions.push_back(expair);
+        force.getExceptionParameters(ii, p1, p2);
+        exclusions[p1].insert(p2);
+        exclusions[p2].insert(p1);
     }
 
     ifPBC = force.usesPeriodicBoundaryConditions();
@@ -106,19 +106,22 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
             }
         }
         // calc exclusions
-        for(int ii=0;ii<exclusions.size();ii++){
-            int idx1 = exclusions[ii].first;
-            int idx2 = exclusions[ii].second;
-            ReferenceForce::getDeltaR(pos[idx1], pos[idx2], &deltaR[0]);
-            double inverseR = 1.0 / deltaR[4];
-            if (includeEnergy) {
-                energy -= ONE_4PI_EPS0*charges[idx1]*charges[idx2]*inverseR;
-            }
-            if (includeForces) {
-                dEdR = ONE_4PI_EPS0*charges[idx1]*charges[idx2]*inverseR*inverseR*inverseR;
-                for(int dd=0;dd<3;dd++){
-                    forces[idx1][dd] += dEdR*deltaR[dd];
-                    forces[idx2][dd] -= dEdR*deltaR[dd];
+        for(int p1=0;p1<numParticles;p1++){
+            for(set<int>::iterator iter=exclusions[p1].begin(); iter != exclusions[p1].end(); iter++){
+                int p2 = *iter;
+                if (p1 < p2) {
+                    ReferenceForce::getDeltaR(pos[p1], pos[p2], &deltaR[0]);
+                    double inverseR = 1.0 / deltaR[4];
+                    if (includeEnergy) {
+                        energy -= ONE_4PI_EPS0*charges[p1]*charges[p2]*inverseR;
+                    }
+                    if (includeForces) {
+                        dEdR = ONE_4PI_EPS0*charges[p1]*charges[p2]*inverseR*inverseR*inverseR;
+                        for(int dd=0;dd<3;dd++){
+                            forces[p1][dd] += dEdR*deltaR[dd];
+                            forces[p2][dd] -= dEdR*deltaR[dd];
+                        }
+                    }
                 }
             }
         }
