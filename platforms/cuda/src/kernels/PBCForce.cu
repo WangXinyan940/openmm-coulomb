@@ -807,11 +807,11 @@ extern "C" __global__ void computeEwaldRecForce(
         int lowrz = 1;
         for (int rx = 0; rx < KMAX_X; rx++) {
             real kx = rx*reciprocalBoxSize.x;
+            real phase = apos.x*kx;
             real costmp1 = COS(phase);
             real sintmp1 = SIN(phase);
             for (int ry = lowry; ry < KMAX_Y; ry++) {
                 real ky = ry*reciprocalBoxSize.y;
-                real phase = apos.x*kx;
                 phase = apos.y*ky;
                 real costmp2 = costmp1 * COS(phase);
                 real sintmp2 = sintmp1 * SIN(phase);
