@@ -93,7 +93,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
                 if (includeEnergy) {
                     energy += ONE_4PI_EPS0*charges[ii]*charges[jj]*inverseR;
                 }
-                if (includeForecs) {
+                if (includeForces) {
                     dEdR = ONE_4PI_EPS0*charges[ii]*charges[jj]*inverseR*inverseR*inverseR;
                     for(int dd=0;dd<3;dd++){
                         forces[ii][dd] += dEdR*deltaR[dd];
@@ -124,15 +124,15 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
         // calc self energy
         double selfEwaldEnergy = 0.0;
         for(int ii=0;ii<numParticles;ii++){
-            selfEwaldEnergy -= ONE_4PI_EPS0 * charges[ii] * charges[ii] * alpha / SQRT_PI;
+            selfEwaldEnergy -= ONE_4PI_EPS0 * charges[ii] * charges[ii] * alpha / sqrt(M_PI);
         }
         // calc reciprocal part
         double recipEnergy = 0.0;
-        double recipX = TWO_PI / box[0][0];
-        double recipY = TWO_PI / box[1][1];
-        double recipZ = TWO_PI / box[2][2];
+        double recipX = 2 * M_PI / box[0][0];
+        double recipY = 2 * M_PI / box[1][1];
+        double recipZ = 2 * M_PI / box[2][2];
 
-        double constant = 4.0 / box[0][0] / box[1][1] / box[2][2] * PI * ONE_4PI_EPS0;
+        double constant = 4.0 / box[0][0] / box[1][1] / box[2][2] * M_PI * ONE_4PI_EPS0;
         
         int minky = 0;
         int minkz = 1;
@@ -163,7 +163,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
                         }
                     }
                     if(includeEnergy){
-                        recipEnergy += constant * eak * (cs * cs + ss * ss)
+                        recipEnergy += constant * eak * (cs * cs + ss * ss);
                     }
                 }
                 minkz = 1 - kmaxz;
@@ -178,7 +178,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
             int jj = pair.second;
 
             double deltaR[2][ReferenceForce::LastDeltaRIndex];
-            ReferenceForce::getDeltaRPeriodic(atomCoordinates[jj], atomCoordinates[ii], periodicBoxVectors, deltaR[0]);
+            ReferenceForce::getDeltaRPeriodic(pos[jj], pos[ii], box, deltaR[0]);
             double r         = deltaR[0][ReferenceForce::RIndex];
             double inverseR  = 1.0/(deltaR[0][ReferenceForce::RIndex]);
             double alphaR = alpha * r;
@@ -203,7 +203,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
             int jj = exclusions[nn].second;
 
             double deltaR[2][ReferenceForce::LastDeltaRIndex];
-            ReferenceForce::getDeltaRPeriodic(atomCoordinates[jj], atomCoordinates[ii], periodicBoxVectors, deltaR[0]);
+            ReferenceForce::getDeltaRPeriodic(pos[jj], pos[ii], box, deltaR[0]);
             double r         = deltaR[0][ReferenceForce::RIndex];
             double inverseR  = 1.0/(deltaR[0][ReferenceForce::RIndex]);
             double alphaR = alpha * r;
