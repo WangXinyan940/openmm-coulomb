@@ -60,7 +60,7 @@ void CudaCalcCoulForceKernel::initialize(const System& system, const CoulForce& 
     for(int ii=0;ii<numParticles;ii++){
         exclusions[ii].push_back(ii);
     }
-    for(int ii=0;ii<force.getNumExclusions();ii++){
+    for(int ii=0;ii<force.getNumExceptions();ii++){
         int p1, p2;
         force.getExclusionParticles(ii, p1, p2);
         exclusions[p1].push_back(p2);
@@ -87,12 +87,12 @@ void CudaCalcCoulForceKernel::initialize(const System& system, const CoulForce& 
         charges_cu.upload(parameters);
     }
 
-    numexclusions = force.getNumExclusions();
+    numexclusions = force.getNumExceptions();
     if (numexclusions > 0){
         vector<int> exidx0, exidx1;
-        exidx0.resize(force.getNumExclusions());
-        exidx1.resize(force.getNumExclusions());
-        for(int ii=0;ii<force.getNumExclusions();ii++){
+        exidx0.resize(force.getNumExceptions());
+        exidx1.resize(force.getNumExceptions());
+        for(int ii=0;ii<force.getNumExceptions();ii++){
             int p1, p2;
             force.getExclusionParticles(ii, p1, p2);
             exidx0[ii] = p1;

@@ -51,8 +51,7 @@ private:
     CUfunction calcEwaldExclusionsKernel;
     CUfunction indexAtomKernel;
     double cutoff;
-    std::vector<double> charges;
-    std::vector<std::pair<int,int>> exclusions;
+    std::vector<std::vector<int>> exclusions;
     int numexclusions;
     double ewaldTol, alpha, one_alpha2;
     bool ifPBC;
