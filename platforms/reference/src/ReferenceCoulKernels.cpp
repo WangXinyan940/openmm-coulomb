@@ -181,7 +181,9 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
         }
         // calc bonded part
         cout << "Bond" << endl;
-        if (exclusions[5].find(6) != exclusions[5].end()) {
+        if (exclusions[6].find(98) != exclusions[6].end()) {
+            cout << "In" << endl;
+        } else {
             cout << "Not in" << endl;
         }
         cout << "Test finish" << endl;
