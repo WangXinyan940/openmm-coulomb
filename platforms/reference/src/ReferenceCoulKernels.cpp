@@ -58,16 +58,25 @@ void ReferenceCalcCoulForceKernel::initialize(const System& system, const CoulFo
         alpha = (1.0/cutoff)*sqrt(-log(2.0*ewaldTol));
         one_alpha2 = 1.0 / alpha / alpha;
         kmaxx = 0;
-        while (getEwaldParamValue(kmaxx, boxVectors[0][0], alpha) > ewaldTol){
+        double gate = getEwaldParamValue(kmaxx, boxVectors[0][0], alpha);
+        while (gate > ewaldTol){
             kmaxx += 1;
+            gate = getEwaldParamValue(kmaxx, boxVectors[0][0], alpha);
+            cout << "G " << gate << endl;
         }
         kmaxy = 0;
-        while (getEwaldParamValue(kmaxy, boxVectors[1][1], alpha) > ewaldTol){
+        gate = getEwaldParamValue(kmaxy, boxVectors[1][1], alpha);
+        while (gate > ewaldTol){
             kmaxy += 1;
+            gate = getEwaldParamValue(kmaxy, boxVectors[1][1], alpha);
+            cout << "G " << gate << endl;
         }
         kmaxz = 0;
-        while (getEwaldParamValue(kmaxz, boxVectors[2][2], alpha) > ewaldTol){
+        gate = getEwaldParamValue(kmaxz, boxVectors[2][2], alpha);
+        while (gate > ewaldTol){
             kmaxz += 1;
+            gate = getEwaldParamValue(kmaxz, boxVectors[2][2], alpha);
+            cout << "G " << gate << endl;
         }
         if (kmaxx%2 == 0)
             kmaxx += 1;
