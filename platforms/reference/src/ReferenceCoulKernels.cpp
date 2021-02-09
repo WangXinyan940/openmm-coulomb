@@ -232,7 +232,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
         }
         cout << "Eex: " << realSpaceException << endl;
 
-        energy = selfEwaldEnergy + recipEnergy + realSpaceEwaldEnergy;
+        energy = selfEwaldEnergy + recipEnergy + realSpaceEwaldEnergy + realSpaceException;
     }
     return energy;
 }
