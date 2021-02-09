@@ -35,7 +35,6 @@ static double getEwaldParamValue(int kmax, double width, double alpha){
 }
 
 void ReferenceCalcCoulForceKernel::initialize(const System& system, const CoulForce& force) {
-    cout << "Init" << endl;
     int numParticles = system.getNumParticles();
     charges.resize(numParticles);
     for(int i=0;i<numParticles;i++){
@@ -80,7 +79,6 @@ void ReferenceCalcCoulForceKernel::initialize(const System& system, const CoulFo
 }
 
 double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeForces, bool includeEnergy) {
-    cout << "Execute" << endl;
     vector<Vec3>& pos = extractPositions(context);
     vector<Vec3>& forces = extractForces(context);
     Vec3* box = extractBoxVectors(context);
@@ -130,13 +128,12 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
     } else {
         // PBC
         // calc self energy
-        cout << "Self" << endl;
         double selfEwaldEnergy = 0.0;
         for(int ii=0;ii<numParticles;ii++){
             selfEwaldEnergy -= ONE_4PI_EPS0 * charges[ii] * charges[ii] * alpha / sqrt(M_PI);
         }
+        cout << "Eself: " << selfEwaldEnergy << endl;
         // calc reciprocal part
-        cout << "Recip" << endl;
         double recipEnergy = 0.0;
         double recipX = 2 * M_PI / box[0][0];
         double recipY = 2 * M_PI / box[1][1];
@@ -180,12 +177,9 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
             }
             minky = 1 - kmaxy;
         }
-        cout << recipEnergy << endl;
+        cout << "Erecip: " << recipEnergy << endl;
         // calc bonded part
-        cout << "Bond" << endl;
         computeNeighborListVoxelHash(*neighborList, numParticles, pos, exclusions, box, ifPBC, cutoff, 0.0);
-        // computeNeighborListNaive(*neighborList, numParticles, pos, exclusions, box, ifPBC, cutoff, 0.0);
-        cout << "After nl" << endl;
         double realSpaceEwaldEnergy = 0.0;
         for(auto& pair : *neighborList){
             int ii = pair.first;
@@ -202,14 +196,14 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
                 dEdR = dEdR * (erfc(alphaR) + alphaR * exp (- alphaR * alphaR) * 2.0 / sqrt(M_PI));
                 for(int kk=0;kk<3;kk++){
                     double fconst = dEdR*deltaR[0][kk];
-                    forces[ii][kk] -= fconst;
-                    forces[jj][kk] += fconst;
+                    forces[ii][kk] += fconst;
+                    forces[jj][kk] -= fconst;
                 }
             }
 
             realSpaceEwaldEnergy += ONE_4PI_EPS0*charges[ii]*charges[jj]*inverseR*erfc(alphaR);
         }
-
+        cout << "Ereal: " << realSpaceEwaldEnergy << endl;
         energy = selfEwaldEnergy + recipEnergy + realSpaceEwaldEnergy;
     }
     return energy;
