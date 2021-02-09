@@ -34,7 +34,7 @@ import simtk.unit as unit
 
 %feature("shadow") CoulPlugin::CoulForce::CoulForce %{
     def __init__(self, *args):
-        this = _openmmcoul.new_CoulForce(acc)
+        this = _openmmcoul.new_CoulForce()
         try:
             self.this.append(this)
         except Exception:
