@@ -212,17 +212,18 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
                 if (p1 < p2) {
                     double deltaR[2][ReferenceForce::LastDeltaRIndex];
                     ReferenceForce::getDeltaRPeriodic(pos[p2], pos[p1], box, deltaR[0]);
+                    // ReferenceForce::getDeltaRPeriodic(pos[p2], pos[p1], deltaR[0]);
                     double r         = deltaR[0][ReferenceForce::RIndex];
                     double inverseR  = 1.0/(deltaR[0][ReferenceForce::RIndex]);
                     double alphaR = alpha * r;
 
                     if(includeForces){
                         double dEdR = ONE_4PI_EPS0 * charges[p1] * charges[p2] * inverseR * inverseR * inverseR;
-                        dEdR = dEdR * (erf(alphaR) + alphaR * exp (- alphaR * alphaR) * 2.0 / sqrt(M_PI));
+                        dEdR = dEdR * (erf(alphaR) - alphaR * exp (- alphaR * alphaR) * 2.0 / sqrt(M_PI));
                         for(int kk=0;kk<3;kk++){
                             double fconst = dEdR*deltaR[0][kk];
-                            forces[p1][kk] += fconst;
-                            forces[p2][kk] -= fconst;
+                            forces[p1][kk] -= fconst;
+                            forces[p2][kk] += fconst;
                         }
                     }
 
@@ -232,7 +233,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
         }
         cout << "Eex: " << realSpaceException << endl;
 
-        energy = selfEwaldEnergy + recipEnergy + realSpaceEwaldEnergy + realSpaceException;
+        energy = selfEwaldEnergy + recipEnergy + realSpaceEwaldEnergy + ;
     }
     return energy;
 }
