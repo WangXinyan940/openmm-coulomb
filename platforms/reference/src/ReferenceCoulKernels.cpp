@@ -177,9 +177,8 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
         }
         // calc bonded part
         cout << "Bond" << endl;
-        vector<set<int>> ex;
         ex.resize(numParticles);
-        computeNeighborListVoxelHash(*neighborList, numParticles, pos, ex, box, true, cutoff, 0.0);
+        computeNeighborListVoxelHash(*neighborList, numParticles, pos, exclusions, box, true, cutoff, 0.0);
         double realSpaceEwaldEnergy = 0.0;
         for(auto& pair : *neighborList){
             int ii = pair.first;
@@ -204,31 +203,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
             realSpaceEwaldEnergy += ONE_4PI_EPS0*charges[ii]*charges[jj]*inverseR*erfc(alphaR);
         }
 
-        // calc exclusion part
-        cout << "Exclud" << endl;
-        double realSpaceExclusion = 0.0;
-        for(int nn=0;nn < exclusions.size(); nn++){
-            int ii = exclusions[nn].first;
-            int jj = exclusions[nn].second;
-
-            double deltaR[2][ReferenceForce::LastDeltaRIndex];
-            ReferenceForce::getDeltaRPeriodic(pos[jj], pos[ii], box, deltaR[0]);
-            double r         = deltaR[0][ReferenceForce::RIndex];
-            double inverseR  = 1.0/(deltaR[0][ReferenceForce::RIndex]);
-            double alphaR = alpha * r;
-
-            if(includeForces){
-                double dEdR = ONE_4PI_EPS0 * charges[ii] * charges[jj] * inverseR * inverseR * inverseR;
-                dEdR = dEdR * (erfc(alphaR) + alphaR * exp (- alphaR * alphaR) * 2.0 / sqrt(M_PI));
-                for(int kk=0;kk<3;kk++){
-                    double fconst = dEdR*deltaR[0][kk];
-                    forces[ii][kk] += fconst;
-                    forces[jj][kk] -= fconst;
-                }
-            }
-            realSpaceExclusion -= ONE_4PI_EPS0*charges[ii]*charges[jj]*inverseR*erfc(alphaR);
-        }
-        energy = selfEwaldEnergy + recipEnergy + realSpaceEwaldEnergy + realSpaceExclusion;
+        energy = selfEwaldEnergy + recipEnergy + realSpaceEwaldEnergy;
     }
     return energy;
 }
