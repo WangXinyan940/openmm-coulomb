@@ -169,10 +169,10 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
                             forces[ii][2] -= gradr * kz;
                         }
                     }
-                    if(includeEnergy){
-                        recipEnergy += constant * eak * (cs * cs + ss * ss);
-                        cout << constant << " " << eak << " " << cs << " " << ss << endl;
-                    }
+
+                    recipEnergy += constant * eak * (cs * cs + ss * ss);
+                    cout << constant << " " << eak << " " << cs << " " << ss << endl;
+
                 }
                 minkz = 1 - kmaxz;
             }
