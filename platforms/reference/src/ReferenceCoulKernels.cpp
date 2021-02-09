@@ -35,6 +35,7 @@ static double getEwaldParamValue(int kmax, double width, double alpha){
 }
 
 void ReferenceCalcCoulForceKernel::initialize(const System& system, const CoulForce& force) {
+    cout << "Init" << endl;
     int numParticles = system.getNumParticles();
     charges.resize(numParticles);
     for(int i=0;i<numParticles;i++){
@@ -77,6 +78,7 @@ void ReferenceCalcCoulForceKernel::initialize(const System& system, const CoulFo
 }
 
 double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeForces, bool includeEnergy) {
+    cout << "Execute" << endl;
     vector<Vec3>& pos = extractPositions(context);
     vector<Vec3>& forces = extractForces(context);
     Vec3* box = extractBoxVectors(context);
@@ -97,8 +99,8 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
                 if (includeForces) {
                     dEdR = ONE_4PI_EPS0*charges[ii]*charges[jj]*inverseR*inverseR*inverseR;
                     for(int dd=0;dd<3;dd++){
-                        forces[ii][dd] += dEdR*deltaR[dd];
-                        forces[jj][dd] -= dEdR*deltaR[dd];
+                        forces[ii][dd] -= dEdR*deltaR[dd];
+                        forces[jj][dd] += dEdR*deltaR[dd];
                     }
                 }
             }
@@ -115,8 +117,8 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
             if (includeForces) {
                 dEdR = ONE_4PI_EPS0*charges[idx1]*charges[idx2]*inverseR*inverseR*inverseR;
                 for(int dd=0;dd<3;dd++){
-                    forces[idx1][dd] -= dEdR*deltaR[dd];
-                    forces[idx2][dd] += dEdR*deltaR[dd];
+                    forces[idx1][dd] += dEdR*deltaR[dd];
+                    forces[idx2][dd] -= dEdR*deltaR[dd];
                 }
             }
         }
