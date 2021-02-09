@@ -62,7 +62,7 @@ void CudaCalcCoulForceKernel::initialize(const System& system, const CoulForce& 
     }
     for(int ii=0;ii<force.getNumExceptions();ii++){
         int p1, p2;
-        force.getExclusionParticles(ii, p1, p2);
+        force.getExceptionParameters(ii, p1, p2);
         exclusions[p1].push_back(p2);
         exclusions[p2].push_back(p1);
     }
@@ -94,7 +94,7 @@ void CudaCalcCoulForceKernel::initialize(const System& system, const CoulForce& 
         exidx1.resize(force.getNumExceptions());
         for(int ii=0;ii<force.getNumExceptions();ii++){
             int p1, p2;
-            force.getExclusionParticles(ii, p1, p2);
+            force.getExceptionParameters(ii, p1, p2);
             exidx0[ii] = p1;
             exidx1[ii] = p2;
         }
