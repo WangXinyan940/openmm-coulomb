@@ -3,6 +3,7 @@
 #include "openmm/internal/ContextImpl.h"
 #include <map>
 #include <iostream>
+#include <cmath>
 
 using namespace CoulPlugin;
 using namespace OpenMM;
