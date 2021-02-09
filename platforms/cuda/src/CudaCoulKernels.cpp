@@ -6,7 +6,6 @@
 #include "openmm/cuda/CudaForceInfo.h"
 #include "openmm/cuda/CudaParameterSet.h"
 #include "openmm/reference/SimTKOpenMMRealType.h"
-#include "CudaKernelSources.h"
 #include <map>
 #include <iostream>
 #include <set>
