@@ -1,6 +1,7 @@
 #include "CudaCoulKernels.h"
 #include "CudaCoulKernelSources.h"
 #include "openmm/internal/ContextImpl.h"
+#include "openmm/reference/SimTKOpenMMRealType.h"
 #include <map>
 #include <iostream>
 #include <cmath>

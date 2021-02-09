@@ -4,6 +4,7 @@
 #include "openmm/internal/ContextImpl.h"
 #include "openmm/reference/ReferencePlatform.h"
 #include "openmm/reference/ReferenceForce.h"
+#include "openmm/reference/SimTKOpenMMRealType.h"
 #include <cmath>
 
 using namespace OpenMM;
