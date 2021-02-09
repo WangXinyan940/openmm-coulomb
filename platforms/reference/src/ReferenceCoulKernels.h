@@ -41,7 +41,7 @@ private:
     double ewaldTol, alpha, one_alpha2;
     bool ifPBC;
     int kmaxx, kmaxy, kmaxz;
-    NeighborList* neighborList;
+    OpenMM::NeighborList* neighborList;
 };
 
 } // namespace CoulPlugin
