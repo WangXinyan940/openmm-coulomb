@@ -81,6 +81,7 @@ void ReferenceCalcCoulForceKernel::initialize(const System& system, const CoulFo
 double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeForces, bool includeEnergy) {
     cout << "Execute" << endl;
     vector<Vec3>& pos = extractPositions(context);
+    cout << pos[1].x << " " << pos[1].y << " " << pos[1].z << endl;
     vector<Vec3>& forces = extractForces(context);
     Vec3* box = extractBoxVectors(context);
     int numParticles = pos.size();
