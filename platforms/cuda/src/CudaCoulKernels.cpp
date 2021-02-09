@@ -6,6 +6,7 @@
 #include "openmm/cuda/CudaForceInfo.h"
 #include "openmm/cuda/CudaParameterSet.h"
 #include "openmm/reference/SimTKOpenMMRealType.h"
+#include "CudaKernelSources.h"
 #include <map>
 #include <iostream>
 #include <set>
@@ -325,7 +326,7 @@ double CudaCalcCoulForceKernel::execute(ContextImpl& context, bool includeForces
             &pairidx1.getDevicePointer(), 
             &numParticles, &paddedNumAtoms
         };
-        cu.executeKernel(calcTestForceNoPBCKernel, args, numParticles*(numParticles-1)/2);
+        cu.executeKernel(calcNoPBCEnForcesKernel, args, numParticles*(numParticles-1)/2);
 
         if (numexclusions > 0){
             void* args2[] = {
@@ -340,7 +341,7 @@ double CudaCalcCoulForceKernel::execute(ContextImpl& context, bool includeForces
                 &numParticles, 
                 &paddedNumAtoms
             };
-            cu.executeKernel(calcExcludeForceNoPBCKernel, args2, numexclusions);
+            cu.executeKernel(calcNoPBCExclusionsKernel, args2, numexclusions);
         }
     }
     return energy;
