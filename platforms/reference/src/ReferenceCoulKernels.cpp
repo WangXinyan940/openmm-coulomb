@@ -177,7 +177,6 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
         }
         // calc bonded part
         cout << "Bond" << endl;
-        ex.resize(numParticles);
         computeNeighborListVoxelHash(*neighborList, numParticles, pos, exclusions, box, true, cutoff, 0.0);
         double realSpaceEwaldEnergy = 0.0;
         for(auto& pair : *neighborList){
