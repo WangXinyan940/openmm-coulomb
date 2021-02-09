@@ -143,6 +143,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
         
         int minky = 0;
         int minkz = 1;
+        cout << kmaxx << " " << kmaxy << " " << kmaxz << endl;
         for(int nkx=0;nkx < kmaxx;nkx++){
             double kx = nkx * recipX;
             for(int nky=minky;nky < kmaxy;nky++){
@@ -169,10 +170,10 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
                             forces[ii][2] -= gradr * kz;
                         }
                     }
-
-                    recipEnergy += constant * eak * (cs * cs + ss * ss);
-                    cout << constant << " " << eak << " " << cs << " " << ss << endl;
-
+                    if(includeEnergy){
+                        recipEnergy += constant * eak * (cs * cs + ss * ss);
+                        cout << constant << " " << eak << " " << cs << " " << ss << endl;
+                    }
                 }
                 minkz = 1 - kmaxz;
             }
