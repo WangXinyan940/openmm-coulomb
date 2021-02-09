@@ -1,9 +1,15 @@
 #include "CudaCoulKernels.h"
 #include "CudaCoulKernelSources.h"
 #include "openmm/internal/ContextImpl.h"
+#include "openmm/cuda/CudaBondedUtilities.h"
+#include "openmm/cuda/CudaNonbondedUtilities.h"
+#include "openmm/cuda/CudaForceInfo.h"
+#include "openmm/cuda/CudaParameterSet.h"
 #include "openmm/reference/SimTKOpenMMRealType.h"
 #include <map>
 #include <iostream>
+#include <set>
+#include <utility>
 #include <cmath>
 
 using namespace CoulPlugin;
