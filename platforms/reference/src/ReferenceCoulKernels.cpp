@@ -41,6 +41,7 @@ void ReferenceCalcCoulForceKernel::initialize(const System& system, const CoulFo
     for(int i=0;i<numParticles;i++){
         charges[i] = force.getParticleCharge(i);
     }
+    exclusions.resize(numParticles);
     for(int ii=0;ii<force.getNumExceptions();ii++){
         int p1, p2;
         force.getExceptionParameters(ii, p1, p2);
