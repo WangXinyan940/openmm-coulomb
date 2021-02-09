@@ -6,7 +6,6 @@
 #include "openmm/cuda/CudaForceInfo.h"
 #include "openmm/cuda/CudaParameterSet.h"
 #include "openmm/reference/SimTKOpenMMRealType.h"
-#include "openmm/cuda/CudaKernelSources.h"
 #include <map>
 #include <iostream>
 #include <set>
@@ -117,7 +116,7 @@ void CudaCalcCoulForceKernel::initialize(const System& system, const CoulForce& 
     if (!ifPBC){
         map<string, string> defines;
         defines["ONE_4PI_EPS0"] = cu.doubleToString(ONE_4PI_EPS0);
-        CUmodule module = cu.createModule(CudaKernelSources::vectorOps + CudaCoulKernelSources::noPBCForce, defines);
+        CUmodule module = cu.createModule(CudaCoulKernelSources::noPBCForce, defines);
         calcNoPBCEnForcesKernel = cu.getKernel(module, "calcNoPBCEnForces");
         calcNoPBCExclusionsKernel = cu.getKernel(module, "calcNoPBCExclusions");
         vector<int> idx0;
@@ -216,7 +215,7 @@ void CudaCalcCoulForceKernel::initialize(const System& system, const CoulForce& 
         pbcDefines["M_PI"] = cu.doubleToString(M_PI);
 
         // macro for short-range
-        CUmodule PBCModule = cu.createModule(CudaKernelSources::vectorOps + CudaCoulKernelSources::PBCForce, pbcDefines);
+        CUmodule PBCModule = cu.createModule(CudaCoulKernelSources::PBCForce, pbcDefines);
         calcEwaldRecEnerKernel = cu.getKernel(PBCModule, "computeEwaldRecEner");
         calcEwaldRecForceKernel = cu.getKernel(PBCModule, "computeEwaldRecForce");
         calcEwaldRealKernel = cu.getKernel(PBCModule, "computeNonbonded");
