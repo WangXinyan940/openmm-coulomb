@@ -125,11 +125,13 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
     } else {
         // PBC
         // calc self energy
+        cout << "Self" << endl;
         double selfEwaldEnergy = 0.0;
         for(int ii=0;ii<numParticles;ii++){
             selfEwaldEnergy -= ONE_4PI_EPS0 * charges[ii] * charges[ii] * alpha / sqrt(M_PI);
         }
         // calc reciprocal part
+        cout << "Recip" << endl;
         double recipEnergy = 0.0;
         double recipX = 2 * M_PI / box[0][0];
         double recipY = 2 * M_PI / box[1][1];
@@ -174,6 +176,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
             minky = 1 - kmaxy;
         }
         // calc bonded part
+        cout << "Bond" << endl;
         vector<set<int>> ex;
         ex.resize(numParticles);
         computeNeighborListVoxelHash(*neighborList, numParticles, pos, ex, box, true, cutoff, 0.0);
@@ -202,6 +205,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
         }
 
         // calc exclusion part
+        cout << "Exclud" << endl;
         double realSpaceExclusion = 0.0;
         for(int nn=0;nn < exclusions.size(); nn++){
             int ii = exclusions[nn].first;
