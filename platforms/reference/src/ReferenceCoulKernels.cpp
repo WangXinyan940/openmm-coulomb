@@ -181,12 +181,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
         }
         // calc bonded part
         cout << "Bond" << endl;
-        if (exclusions[6].find(98) != exclusions[6].end()) {
-            cout << "In" << endl;
-        } else {
-            cout << "Not in" << endl;
-        }
-        cout << "Test finish" << endl;
+        cout << numParticles << " " << pos.size() << " " << cutoff << endl;
         computeNeighborListVoxelHash(*neighborList, numParticles, pos, exclusions, box, true, cutoff, 0.0);
         cout << "After nl" << endl;
         double realSpaceEwaldEnergy = 0.0;
