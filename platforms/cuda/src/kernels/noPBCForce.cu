@@ -18,7 +18,7 @@ extern "C" __global__ void calcNoPBCEnForces(
         real c1c2 = charges[atomIndex[ii]] * charges[atomIndex[jj]];
         energyBuffer[npair] += ONE_4PI_EPS0 * c1c2 * inverseR;
         real dEdRdR = ONE_4PI_EPS0 * c1c2 * inverseR * inverseR * inverseR;
-        real3 force = dEdRdR * delta;
+        real3 force = - dEdRdR * delta;
         atomicAdd(&forceBuffers[ii], static_cast<unsigned long long>((long long) (force.x*0x100000000)));
         atomicAdd(&forceBuffers[ii+paddedNumAtoms], static_cast<unsigned long long>((long long) (force.y*0x100000000)));
         atomicAdd(&forceBuffers[ii+2*paddedNumAtoms], static_cast<unsigned long long>((long long) (force.z*0x100000000)));
@@ -48,7 +48,7 @@ extern "C" __global__ void calcNoPBCExclusions(
         real c1c2 = charges[atomIndex[ii]] * charges[atomIndex[jj]];
         energyBuffer[npair] -= ONE_4PI_EPS0 * c1c2 * inverseR;
         real dEdRdR = ONE_4PI_EPS0 * c1c2 * inverseR * inverseR * inverseR;
-        real3 force = - dEdRdR * delta;
+        real3 force = dEdRdR * delta;
         atomicAdd(&forceBuffers[ii], static_cast<unsigned long long>((long long) (force.x*0x100000000)));
         atomicAdd(&forceBuffers[ii+paddedNumAtoms], static_cast<unsigned long long>((long long) (force.y*0x100000000)));
         atomicAdd(&forceBuffers[ii+2*paddedNumAtoms], static_cast<unsigned long long>((long long) (force.z*0x100000000)));
