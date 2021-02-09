@@ -171,7 +171,9 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
             minky = 1 - kmaxy;
         }
         // calc bonded part
-        computeNeighborListVoxelHash(*neighborList, numParticles, pos, vector<set<int>>, box, true, cutoff, 0.0);
+        vector<set<int>> ex;
+        ex.resize(numParticles);
+        computeNeighborListVoxelHash(*neighborList, numParticles, pos, ex, box, true, cutoff, 0.0);
         double realSpaceEwaldEnergy = 0.0;
         for(auto& pair : *neighborList){
             int ii = pair.first;
