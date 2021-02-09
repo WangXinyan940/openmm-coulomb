@@ -47,7 +47,7 @@ void CoulForce::setUsesPeriodicBoundaryConditions(bool ifPeriod){
 }
 
 void CoulForce::addException(int p1, int p2){
-    pair<int,int> = expair(p1, p2);
+    pair<int,int> expair(p1, p2);
     exclusions.push_back(expair);
 }
 
