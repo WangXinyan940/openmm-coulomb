@@ -706,7 +706,7 @@ extern "C" __global__ void computeExclusion(
             const real erfcAlphaR = (0.254829592f+(-0.284496736f+(1.421413741f+(-1.453152027f+1.061405429f*t)*t)*t)*t)*t*expAlphaRSqr;
 #endif
             energyBuffer[npair] -= ONE_4PI_EPS0 * c1c2 * invR * erfcAlphaR;
-            real dEdR = - ONE_4PI_EPS0 * c1c2 * invR * invR * invR
+            real dEdR = - ONE_4PI_EPS0 * c1c2 * invR * invR * invR;
             dEdR = dEdR * (alphaR * EXP(- alphaR * alphaR) * TWO_OVER_SQRT_PI + erfcAlphaR);
             delta *= dEdR;
             atomicAdd(&forceBuffers[atom1], static_cast<unsigned long long>((long long) (-delta.x*0x100000000)));
@@ -779,7 +779,7 @@ extern "C" __global__ void computeEwaldRecEner(
 
         real k2 = kx*kx + ky*ky + kz*kz;
         real ak = EXP(k2*EXP_COEFFICIENT) / k2;
-        energy += reciprocalCoefficient*ak*(sum.x*sum.x + sum.y*sum.y);
+        energy += reciprocalCoefficient*ak*(cossum*cossum + sinsum*sinsum);
         index += blockDim.x*gridDim.x;
     }
     energyBuffer[blockIdx.x*blockDim.x+threadIdx.x] += energy;
@@ -790,8 +790,8 @@ extern "C" __global__ void computeEwaldRecForce(
     const real4*              __restrict__     posq, 
     const real*               __restrict__     charges,
     const int*                __restrict__     atomIndex,
-    const real2*              __restrict__     cosSinSums, 
-    real4                                      periodicBoxSize
+    const real*               __restrict__     cosSinSums, 
+    real4                                      periodicBoxSize,
     real4                                      invPeriodicBoxSize
 ){
     unsigned int atom = blockIdx.x*blockDim.x+threadIdx.x;
@@ -807,22 +807,23 @@ extern "C" __global__ void computeEwaldRecForce(
         int lowrz = 1;
         for (int rx = 0; rx < KMAX_X; rx++) {
             real kx = rx*reciprocalBoxSize.x;
+            real costmp1 = COS(phase);
+            real sintmp1 = SIN(phase);
             for (int ry = lowry; ry < KMAX_Y; ry++) {
                 real ky = ry*reciprocalBoxSize.y;
                 real phase = apos.x*kx;
-                real2 tab_xy = make_real2(COS(phase), SIN(phase));
                 phase = apos.y*ky;
-                tab_xy = multofReal2(tab_xy, make_real2(COS(phase), SIN(phase)));
+                real costmp2 = costmp1 * COS(phase);
+                real sintmp2 = sintmp1 * SIN(phase);
                 for (int rz = lowrz; rz < KMAX_Z; rz++) {
                     real kz = rz*reciprocalBoxSize.z;
 
                     // Compute the force contribution of this wave vector.
-
                     int index = rx*(KMAX_Y*2-1)*(KMAX_Z*2-1) + (ry+KMAX_Y-1)*(KMAX_Z*2-1) + (rz+KMAX_Z-1);
                     real k2 = kx*kx + ky*ky + kz*kz;
                     real ak = EXP(k2*EXP_COEFFICIENT)/k2;
                     phase = apos.z*kz;
-                    real2 structureFactor = multofReal2(tab_xy, make_real2(COS(phase), SIN(phase)));
+                    real2 structureFactor = make_real2(costmp2*COS(phase), sintmp2*SIN(phase));
                     real cossum = cosSinSums[index*2];
                     real sinsum = cosSinSums[index*2+1];
                     real dEdR = 2*reciprocalCoefficient*ak*charges[atomIndex[atom]]*(cossum*structureFactor.y - sinsum*structureFactor.x);

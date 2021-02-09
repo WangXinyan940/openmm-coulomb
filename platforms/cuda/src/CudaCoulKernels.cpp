@@ -211,7 +211,7 @@ void CudaCalcCoulForceKernel::initialize(const System& system, const CoulForce& 
         pbcDefines["KMAX_X"] = cu.intToString(kmaxx);
         pbcDefines["KMAX_Y"] = cu.intToString(kmaxy);
         pbcDefines["KMAX_Z"] = cu.intToString(kmaxz);
-        pbcDefines["EXP_COEF"] = cu.doubleToString(-1.0/(4.0*alpha*alpha));
+        pbcDefines["EXP_COEFFICIENT"] = cu.doubleToString(-1.0/(4.0*alpha*alpha));
         pbcDefines["ONE_4PI_EPS0"] = cu.doubleToString(ONE_4PI_EPS0);
         pbcDefines["M_PI"] = cu.doubleToString(M_PI);
 
