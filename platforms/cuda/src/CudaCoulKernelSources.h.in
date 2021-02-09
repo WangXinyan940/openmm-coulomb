@@ -1,5 +1,5 @@
-#ifndef OPENMM_CUDA_COSACC_KERNEL_SOURCES_H_
-#define OPENMM_CUDA_COSACC_KERNEL_SOURCES_H_
+#ifndef OPENMM_CUDA_COUL_KERNEL_SOURCES_H_
+#define OPENMM_CUDA_COUL_KERNEL_SOURCES_H_
 
 /* -------------------------------------------------------------------------- *
  *                                   OpenMM                                   *
@@ -34,7 +34,7 @@
 
 #include <string>
 
-namespace CosAccPlugin {
+namespace CoulPlugin {
 
 /**
  * This class is a central holding place for the source code of CUDA kernels.
@@ -42,11 +42,11 @@ namespace CosAccPlugin {
  * kernels subfolder.
  */
 
-class CudaCosAccKernelSources {
+class CudaCoulKernelSources {
 public:
 @CUDA_FILE_DECLARATIONS@
 };
 
-} // namespace CosAccPlugin
+} // namespace CoulPlugin
 
-#endif /*OPENMM_CUDA_COSACC_KERNEL_SOURCES_H_*/
+#endif /*OPENMM_CUDA_COUL_KERNEL_SOURCES_H_*/
