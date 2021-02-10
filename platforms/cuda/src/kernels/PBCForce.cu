@@ -807,14 +807,10 @@ extern "C" __global__ void computeEwaldRecForce(
         int lowrz = 1;
         for (int rx = 0; rx < KMAX_X; rx++) {
             real kx = rx*reciprocalBoxSize.x;
-            real phase = apos.x*kx;
-            real costmp1 = COS(phase);
-            real sintmp1 = SIN(phase);
+            real phase1 = apos.x*kx;
             for (int ry = lowry; ry < KMAX_Y; ry++) {
                 real ky = ry*reciprocalBoxSize.y;
-                phase = apos.y*ky;
-                real costmp2 = costmp1 * COS(phase);
-                real sintmp2 = sintmp1 * SIN(phase);
+                real phase2 = phase1 + apos.y*ky;
                 for (int rz = lowrz; rz < KMAX_Z; rz++) {
                     real kz = rz*reciprocalBoxSize.z;
 
@@ -822,8 +818,8 @@ extern "C" __global__ void computeEwaldRecForce(
                     int index = rx*(KMAX_Y*2-1)*(KMAX_Z*2-1) + (ry+KMAX_Y-1)*(KMAX_Z*2-1) + (rz+KMAX_Z-1);
                     real k2 = kx*kx + ky*ky + kz*kz;
                     real ak = EXP(k2*EXP_COEFFICIENT)/k2;
-                    phase = apos.z*kz;
-                    real2 structureFactor = make_real2(costmp2*COS(phase), sintmp2*SIN(phase));
+                    real phase3 = phase2 + apos.z*kz;
+                    real2 structureFactor = make_real2(COS(phase3), SIN(phase3));
                     real cossum = cosSinSums[index*2];
                     real sinsum = cosSinSums[index*2+1];
                     real dEdR = 2*reciprocalCoefficient*ak*charges[atomIndex[atom]]*(cossum*structureFactor.y - sinsum*structureFactor.x);
