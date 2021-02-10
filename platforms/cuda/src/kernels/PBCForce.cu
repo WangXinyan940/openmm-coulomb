@@ -707,7 +707,7 @@ extern "C" __global__ void computeExclusion(
 #endif
             energyBuffer[npair] -= ONE_4PI_EPS0 * c1c2 * invR;
             real dEdR = - ONE_4PI_EPS0 * c1c2 * invR * invR * invR;
-            dEdR = dEdR * (alphaR * EXP(- alphaR * alphaR) * TWO_OVER_SQRT_PI + erfcAlphaR);
+            // dEdR = dEdR * (alphaR * EXP(- alphaR * alphaR) * TWO_OVER_SQRT_PI + erfcAlphaR);
             delta *= dEdR;
 
             atomicAdd(&forceBuffers[atom1], static_cast<unsigned long long>((long long) (-delta.x*0x100000000)));
