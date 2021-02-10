@@ -129,12 +129,15 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
         // PBC
         // calc self energy
         double selfEwaldEnergy = 0.0;
+        double recipEnergy = 0.0;
+        double realSpaceEwaldEnergy = 0.0;
+        double realSpaceException = 0.0;
         for(int ii=0;ii<numParticles;ii++){
             selfEwaldEnergy -= ONE_4PI_EPS0 * charges[ii] * charges[ii] * alpha / sqrt(M_PI);
         }
         cout << "Eself: " << selfEwaldEnergy << endl;
         // calc reciprocal part
-        double recipEnergy = 0.0;
+        
         double recipX = 2 * M_PI / box[0][0];
         double recipY = 2 * M_PI / box[1][1];
         double recipZ = 2 * M_PI / box[2][2];
@@ -180,8 +183,9 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
         }
         cout << "Erecip: " << recipEnergy << endl;
         // calc bonded part
+        /*
         computeNeighborListVoxelHash(*neighborList, numParticles, pos, exclusions, box, ifPBC, cutoff, 0.0);
-        double realSpaceEwaldEnergy = 0.0;
+        
         for(auto& pair : *neighborList){
             int ii = pair.first;
             int jj = pair.second;
@@ -205,7 +209,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
             realSpaceEwaldEnergy += ONE_4PI_EPS0*charges[ii]*charges[jj]*inverseR*erfc(alphaR);
         }
         cout << "Ereal: " << realSpaceEwaldEnergy << endl;
-        double realSpaceException = 0.0;
+        
         for(int p1=0;p1<numParticles;p1++){
             for(set<int>::iterator iter=exclusions[p1].begin(); iter != exclusions[p1].end(); iter++){
                 int p2 = *iter;
@@ -232,6 +236,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
             }
         }
         cout << "Eex: " << realSpaceException << endl;
+        */
 
         energy = selfEwaldEnergy + recipEnergy + realSpaceEwaldEnergy + realSpaceException;
     }
