@@ -239,7 +239,7 @@ double CudaCalcCoulForceKernel::execute(ContextImpl& context, bool includeForces
     int numParticles = cu.getNumAtoms();
     double energy = 0.0;
     if (ifPBC){
-        energy += selfEwaldEnergy;
+        // energy += selfEwaldEnergy;
         void* args_rec1[] = {
             &cu.getEnergyBuffer().getDevicePointer(),
             &cu.getPosq().getDevicePointer(),
