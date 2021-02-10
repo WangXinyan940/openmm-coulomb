@@ -183,7 +183,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
         }
         cout << "Erecip: " << recipEnergy << endl;
         // calc bonded part
-        /*
+
         computeNeighborListVoxelHash(*neighborList, numParticles, pos, exclusions, box, ifPBC, cutoff, 0.0);
         
         for(auto& pair : *neighborList){
@@ -236,7 +236,6 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
             }
         }
         cout << "Eex: " << realSpaceException << endl;
-        */
 
         energy = selfEwaldEnergy + recipEnergy + realSpaceEwaldEnergy + realSpaceException;
     }
