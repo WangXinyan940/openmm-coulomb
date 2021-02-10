@@ -225,7 +225,8 @@ void CudaCalcCoulForceKernel::initialize(const System& system, const CoulForce& 
 
         selfEwaldEnergy = 0.0;
         for(int ii=0;ii<numParticles;ii++){
-            selfEwaldEnergy -= ONE_4PI_EPS0 * parameters[ii] * parameters[ii] * alpha / sqrt(M_PI);
+            double chrg = force.getParticleCharge(ii);
+            selfEwaldEnergy -= ONE_4PI_EPS0 * chrg * chrg * alpha / sqrt(M_PI);
         }
     }
     hasInitializedKernel = true;
