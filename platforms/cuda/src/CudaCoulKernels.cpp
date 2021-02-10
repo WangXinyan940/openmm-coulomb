@@ -161,15 +161,15 @@ void CudaCalcCoulForceKernel::initialize(const System& system, const CoulForce& 
         system.getDefaultPeriodicBoxVectors(boxVectors[0], boxVectors[1], boxVectors[2]);
         alpha = (1.0/cutoff)*sqrt(-log(2.0*ewaldTol));
         one_alpha2 = 1.0 / alpha / alpha;
-        kmaxx = 0;
+        kmaxx = 1;
         while (getEwaldParamValue(kmaxx, boxVectors[0][0], alpha) > ewaldTol){
             kmaxx += 1;
         }
-        kmaxy = 0;
+        kmaxy = 1;
         while (getEwaldParamValue(kmaxy, boxVectors[1][1], alpha) > ewaldTol){
             kmaxy += 1;
         }
-        kmaxz = 0;
+        kmaxz = 1;
         while (getEwaldParamValue(kmaxz, boxVectors[2][2], alpha) > ewaldTol){
             kmaxz += 1;
         }
