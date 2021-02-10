@@ -209,7 +209,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
             realSpaceEwaldEnergy += ONE_4PI_EPS0*charges[ii]*charges[jj]*inverseR*erfc(alphaR);
         }
         cout << "Ereal: " << realSpaceEwaldEnergy << endl;
-
+        /*
         for(int p1=0;p1<numParticles;p1++){
             for(set<int>::iterator iter=exclusions[p1].begin(); iter != exclusions[p1].end(); iter++){
                 int p2 = *iter;
@@ -236,7 +236,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
             }
         }
         cout << "Eex: " << realSpaceException << endl;
-
+        */
         energy = selfEwaldEnergy + recipEnergy + realSpaceEwaldEnergy + realSpaceException;
     }
     return energy;

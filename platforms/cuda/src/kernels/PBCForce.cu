@@ -706,7 +706,7 @@ extern "C" __global__ void computeExclusion(
             const real t = RECIP(1.0f+0.3275911f*alphaR);
             const real erfcAlphaR = (0.254829592f+(-0.284496736f+(1.421413741f+(-1.453152027f+1.061405429f*t)*t)*t)*t)*t*expAlphaRSqr;
 #endif
-            energyBuffer[npair] -= ONE_4PI_EPS0 * c1c2 * invR;
+            energyBuffer[npair] -= ONE_4PI_EPS0 * c1c2 * invR * erfcAlphaR;
             real dEdR = - ONE_4PI_EPS0 * c1c2 * invR * invR * invR;
             // dEdR = dEdR * (alphaR * EXP(- alphaR * alphaR) * TWO_OVER_SQRT_PI + erfcAlphaR);
             delta *= dEdR;
