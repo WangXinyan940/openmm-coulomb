@@ -767,8 +767,8 @@ extern "C" __global__ void computeEwaldRecEner(
         real sinsum = 0;
         for (int atom = 0; atom < NUM_ATOMS; atom++) {
             real4 apos = posq[atom];
-            real costmp = COS(apos.x*kx) * COS(apos.y*ky) * COS(apos.z*kz);
-            real sintmp = SIN(apos.x*kx) * SIN(apos.y*ky) * SIN(apos.z*kz);
+            real costmp = COS(apos.x*kx + apos.y*ky + apos.z*kz);
+            real sintmp = SIN(apos.x*kx + apos.y*ky + apos.z*kz);
             cossum += costmp * charges[atomIndex[atom]];
             sinsum += sintmp * charges[atomIndex[atom]];
         }
