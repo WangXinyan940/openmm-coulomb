@@ -54,6 +54,7 @@ private:
     std::vector<std::vector<int>> exclusions;
     int numexclusions;
     double ewaldTol, alpha, one_alpha2;
+    double selfEwaldEnergy;
     bool ifPBC;
     int kmaxx, kmaxy, kmaxz;
     double selfenergy;

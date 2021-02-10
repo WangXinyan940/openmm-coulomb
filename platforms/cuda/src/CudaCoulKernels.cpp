@@ -222,6 +222,11 @@ void CudaCalcCoulForceKernel::initialize(const System& system, const CoulForce& 
         calcEwaldRealKernel = cu.getKernel(PBCModule, "computeNonbonded");
         calcEwaldExclusionsKernel = cu.getKernel(PBCModule, "computeExclusion");
         indexAtomKernel = cu.getKernel(PBCModule, "genIndexAtom");
+
+        selfEwaldEnergy = 0.0;
+        for(int ii=0;ii<numParticles;ii++){
+            selfEwaldEnergy -= ONE_4PI_EPS0 * charges[ii] * charges[ii] * alpha / sqrt(M_PI);
+        }
     }
     hasInitializedKernel = true;
 
@@ -233,6 +238,7 @@ double CudaCalcCoulForceKernel::execute(ContextImpl& context, bool includeForces
     int numParticles = cu.getNumAtoms();
     double energy = 0.0;
     if (ifPBC){
+        energy += selfEwaldEnergy;
         void* args_rec1[] = {
             &cu.getEnergyBuffer().getDevicePointer(),
             &cu.getPosq().getDevicePointer(),
@@ -286,7 +292,7 @@ double CudaCalcCoulForceKernel::execute(ContextImpl& context, bool includeForces
             &maxSinglePairs,                                        // unsigned int                               maxSinglePairs,
             &nb.getSinglePairs().getDevicePointer()                // const int2*               __restrict__     singlePairs
         };
-        cu.executeKernel(calcEwaldRealKernel, args, nb.getNumForceThreadBlocks()*nb.getForceThreadBlockSize(), nb.getForceThreadBlockSize());
+        // cu.executeKernel(calcEwaldRealKernel, args, nb.getNumForceThreadBlocks()*nb.getForceThreadBlockSize(), nb.getForceThreadBlockSize());
 
         if (numexclusions > 0){
             void* argSwitch[] = {
@@ -312,7 +318,7 @@ double CudaCalcCoulForceKernel::execute(ContextImpl& context, bool includeForces
                 cu.getPeriodicBoxVecYPointer(),               //   periodicBoxVecY, 
                 cu.getPeriodicBoxVecZPointer()                //   periodicBoxVecZ
             };
-            cu.executeKernel(calcEwaldExclusionsKernel, argsEx, numexclusions);
+            // cu.executeKernel(calcEwaldExclusionsKernel, argsEx, numexclusions);
         }
     } else {
         int paddedNumAtoms = cu.getPaddedNumAtoms();
