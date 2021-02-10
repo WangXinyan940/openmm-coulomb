@@ -209,7 +209,7 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
             realSpaceEwaldEnergy += ONE_4PI_EPS0*charges[ii]*charges[jj]*inverseR*erfc(alphaR);
         }
         cout << "Ereal: " << realSpaceEwaldEnergy << endl;
-        /*
+
         for(int p1=0;p1<numParticles;p1++){
             for(set<int>::iterator iter=exclusions[p1].begin(); iter != exclusions[p1].end(); iter++){
                 int p2 = *iter;
@@ -220,23 +220,24 @@ double ReferenceCalcCoulForceKernel::execute(ContextImpl& context, bool includeF
                     double r         = deltaR[0][ReferenceForce::RIndex];
                     double inverseR  = 1.0/(deltaR[0][ReferenceForce::RIndex]);
                     double alphaR = alpha * r;
+                    cout << p1 << " " << p2 << " " << r << endl;
 
                     if(includeForces){
-                        double dEdR = ONE_4PI_EPS0 * charges[p1] * charges[p2] * inverseR * inverseR * inverseR;
-                        dEdR = dEdR * (erf(alphaR) - alphaR * exp (- alphaR * alphaR) * 2.0 / sqrt(M_PI));
-                        for(int kk=0;kk<3;kk++){
-                            double fconst = dEdR*deltaR[0][kk];
-                            forces[p1][kk] -= fconst;
-                            forces[p2][kk] += fconst;
+                        // double dEdR = ONE_4PI_EPS0 * charges[p1] * charges[p2] * inverseR * inverseR * inverseR;
+                        // dEdR = dEdR * (erf(alphaR) - alphaR * exp (- alphaR * alphaR) * 2.0 / sqrt(M_PI));
+                        // for(int kk=0;kk<3;kk++){
+                        //     double fconst = dEdR*deltaR[0][kk];
+                        //     forces[p1][kk] -= fconst;
+                        //     forces[p2][kk] += fconst;
                         }
                     }
 
-                    realSpaceException -= ONE_4PI_EPS0*charges[p1]*charges[p2]*inverseR*erf(alphaR);
+                    // realSpaceException -= ONE_4PI_EPS0*charges[p1]*charges[p2]*inverseR*erf(alphaR);
                 }
             }
         }
         cout << "Eex: " << realSpaceException << endl;
-        */
+
         energy = selfEwaldEnergy + recipEnergy + realSpaceEwaldEnergy + realSpaceException;
     }
     return energy;
