@@ -699,7 +699,7 @@ extern "C" __global__ void computeExclusion(
         real r = r2 * invR;
         real alphaR = EWALD_ALPHA * r;
         if (r < CUTOFF){
-            printf("%i %i\n", p1, p2);
+            printf("%i %i %f\n", p1, p2, r);
 #ifdef USE_DOUBLE_PRECISION
             const real erfcAlphaR = erfc(alphaR);
 #else
