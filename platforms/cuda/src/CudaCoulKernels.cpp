@@ -179,7 +179,6 @@ void CudaCalcCoulForceKernel::initialize(const System& system, const CoulForce& 
             kmaxy += 1;
         if (kmaxz%2 == 0)
             kmaxz += 1;
-        cout << kmaxx << " " << kmaxy << " " << kmaxz << endl;
 
         int elementSize = (cu.getUseDoublePrecision() ? sizeof(double) : sizeof(float));
         cosSinSums.initialize(cu, 2*(2*kmaxx-1)*(2*kmaxy-1)*(2*kmaxz-1), elementSize, "cosSinSums");
@@ -241,7 +240,6 @@ double CudaCalcCoulForceKernel::execute(ContextImpl& context, bool includeForces
     double energy = 0.0;
     if (ifPBC){
         energy += selfEwaldEnergy;
-        cout << "NK: " << (2*kmaxx-1)*(2*kmaxy-1)*(2*kmaxz-1) << endl;
         void* args_rec1[] = {
             &cu.getEnergyBuffer().getDevicePointer(),
             &cu.getPosq().getDevicePointer(),
